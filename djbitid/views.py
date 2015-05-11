@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.shortcuts import render
 from django.views.generic.base import View, TemplateView
 from django.core.urlresolvers import reverse
@@ -23,8 +24,10 @@ class BitIdView(View):
 
     def get_callback_uri(self, request):
         hostname = request.META.get('HTTP_HOST', self.DEFAULT_HOSTNAME)
-
-        return 'https://%s%s' % (hostname, reverse('djbitid_callback'))
+        secure = True
+        if settings.DEBUG:
+            secure = False
+        return 'http%s://%s%s' % ('s' if secure else '', hostname, reverse('djbitid_callback'))
     
 
 class BitIdChallenge(BitIdView):
