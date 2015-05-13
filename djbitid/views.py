@@ -105,16 +105,12 @@ class BitIdCallback(BitIdView):
         if user is not None:
             logger.info('is_auth?=%s' % user.is_authenticated())
             user.save()
-            #login(request, user)
-            #return render(request, self.template_name, {'user': user })
-            return HttpResponseRedirect(reverse('djbitid_challenge'))
+            login(request, user)
+            return HttpResponseRedirect(reverse('index'))
         else:
             form = BitIdForm(request.POST)
             form.full_clean()
             for error in errors:
                 form._errors[NON_FIELD_ERRORS] = form.error_class([error])
-            #return HttpResponseRedirect(reverse('djbitid_challenge'))
-            #return HttpResponseRedirect(reverse('login'))
-            #return HttpResponseRedirect(reverse('djbitid_challenge'))
             qrcode = bitid.qrcode(bitid_uri)
             return render(request, self.template_name, {'form': form, 'bitid_uri': bitid_uri, 'qrcode': qrcode })
